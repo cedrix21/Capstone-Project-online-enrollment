@@ -4,16 +4,21 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  background: linear-gradient(to right, #96882e, #837a5f);
+  min-height: 100vh;
+
+  background-image: url("../assets/SICS.jpg");  /* <<< ADD THIS */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .login-card {
-  background-color: #fff8dc;
+  background-color: #fcf7e4;
   padding: 40px;
   border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  box-shadow: 0 20px 50px rgb(12, 12, 12);
   width: 100%;
   max-width: 400px;
 }

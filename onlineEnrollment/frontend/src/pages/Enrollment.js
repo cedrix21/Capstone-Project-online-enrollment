@@ -39,7 +39,7 @@ export default function Enrollment() {
   return (
     <div className="enrollment-container">
       <div className="enrollment-card">
-        <h2>Student Enrollment</h2>
+        <h2>Student Enrollment Form</h2>
         {message && <p className="message">{message}</p>}
         <form onSubmit={handleSubmit}>
           <div className="input-group">

@@ -2,11 +2,15 @@
 
 .dashboard-container {
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
+  align-items: center;
   min-height: 100vh;
-  background: linear-gradient(to right, #f7e14b, #ffe066);
+
+  background-image: url("../assets/SICS.jpg");  /* <<< ADD THIS */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
