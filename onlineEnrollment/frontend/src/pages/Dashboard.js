@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import "./Dashboard.css";
 
 export default function Dashboard() {
   const [user, setUser] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -14,9 +17,9 @@ export default function Dashboard() {
       .then((res) => setUser(res.data))
       .catch(() => {
         localStorage.removeItem("token");
-        window.location.href = "/login";
+        navigate("/login");
       });
-  }, []);
+  }, [navigate]);
 
   const handleLogout = async () => {
     const token = localStorage.getItem("token");
@@ -26,16 +29,19 @@ export default function Dashboard() {
       { headers: { Authorization: `Bearer ${token}` } }
     );
     localStorage.removeItem("token");
-    window.location.href = "/login";
+    navigate("/login");
   };
 
   if (!user) return <p>Loading...</p>;
 
   return (
-    <div style={{ maxWidth: "600px", margin: "50px auto" }}>
-      <h2>Welcome, {user.name}!</h2>
-      <p>Email: {user.email}</p>
-      <button onClick={handleLogout}>Logout</button>
+    <div className="dashboard-container">
+      <div className="dashboard-card">
+        <h1>Welcome, {user.name}!</h1>
+        <p>This is a protected page. Only logged-in users can see this.</p>
+        <button onClick={() => navigate("/enroll")}>Go to Enrollment Form</button>
+        <button onClick={handleLogout}>Logout</button>
+      </div>
     </div>
   );
 }
