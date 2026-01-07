@@ -9,7 +9,9 @@ export default function Enrollment() {
     email: "",
     gradeLevel: "",
   });
-  const [message, setMessage] = useState("");
+const [message, setMessage] = useState("");
+const [loading, setLoading] = useState(false);
+
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });

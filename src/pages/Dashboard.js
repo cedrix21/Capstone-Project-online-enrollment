@@ -5,7 +5,7 @@ import "./Dashboard.css";
 
 export default function Dashboard() {
   const [user, setUser] = useState(null);
-  const [summary, setSummary] = useState(null);
+  const [summary, setSummary] = useState({ pending: 0, approved: 0, rejected: 0 });
   const [loadingSummary, setLoadingSummary] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -24,15 +24,18 @@ export default function Dashboard() {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => setUser(res.data))
-      .catch(() => {
+      .catch((err) => {
+        console.error("User fetch error:", err.response || err);
         localStorage.removeItem("token");
         navigate("/login");
       });
   }, [navigate, token]);
 
+  const isAdminOrRegistrar = user?.role === "admin" || user?.role === "registrar";
+
   // Fetch enrollment summary for admin/registrar
   useEffect(() => {
-    if (user && (user.role === "admin" || user.role === "registrar")) {
+    if (isAdminOrRegistrar) {
       fetchSummary();
     }
     // eslint-disable-next-line
@@ -40,14 +43,21 @@ export default function Dashboard() {
 
   const fetchSummary = async () => {
     setLoadingSummary(true);
+    setError("");
     try {
       const res = await axios.get(
         "http://127.0.0.1:8000/api/enrollments/summary",
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      setSummary(res.data);
+      // Default to 0 if any field is missing
+      setSummary({
+        pending: res.data?.pending || 0,
+        approved: res.data?.approved || 0,
+        rejected: res.data?.rejected || 0,
+      });
     } catch (err) {
-      setError("Failed to load summary");
+      console.error("Summary fetch error:", err.response || err);
+      setError("Failed to load summary. Make sure your admin/registrar role is set.");
     } finally {
       setLoadingSummary(false);
     }
@@ -60,14 +70,15 @@ export default function Dashboard() {
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
-    } catch {}
-    localStorage.removeItem("token");
-    navigate("/login");
+    } catch (err) {
+      console.warn("Logout failed:", err.response || err);
+    } finally {
+      localStorage.removeItem("token");
+      navigate("/login");
+    }
   };
 
-  if (!user) return <p>Loading...</p>;
-
-  const isAdminOrRegistrar = user.role === "admin" || user.role === "registrar";
+  if (!user) return <p>Loading user...</p>;
 
   return (
     <div className="dashboard-container">
@@ -83,8 +94,8 @@ export default function Dashboard() {
               {loadingSummary ? (
                 <p>Loading summary...</p>
               ) : error ? (
-                <p>{error}</p>
-              ) : summary ? (
+                <p className="error">{error}</p>
+              ) : (
                 <>
                   <div className="card pending">
                     <h3>Pending</h3>
@@ -99,12 +110,9 @@ export default function Dashboard() {
                     <p>{summary.rejected}</p>
                   </div>
                 </>
-              ) : (
-                <p>No data</p>
               )}
             </div>
 
-            <p>You can manage and approve enrollments.</p>
             <button onClick={() => navigate("/enroll")}>Add Student</button>
             <button
               className="manage-button"
@@ -112,6 +120,7 @@ export default function Dashboard() {
             >
               Go to Enrollment Management
             </button>
+            <button onClick={() => navigate("/enrollment-qr")}>Show Enrollment QR</button>
           </>
         )}
 
@@ -119,9 +128,7 @@ export default function Dashboard() {
         {!isAdminOrRegistrar && (
           <>
             <p>You may submit an enrollment form.</p>
-            <button onClick={() => navigate("/enroll")}>
-              Go to Enrollment Form
-            </button>
+            <button onClick={() => navigate("/enroll")}>Go to Enrollment Form</button>
           </>
         )}
 

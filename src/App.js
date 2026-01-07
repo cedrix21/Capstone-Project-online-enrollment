@@ -4,6 +4,7 @@ import Dashboard from "./pages/Dashboard";
 import Enrollment from "./pages/Enrollment";
 import EnrollmentManagement from "./pages/EnrollmentManagement";
 import ProtectedRoute from "./components/ProtectedRoute";
+import EnrollmentQR from "./pages/EnrollmentQR";
 
 function App() {
   return (
@@ -24,7 +25,8 @@ function App() {
 
         <Route path="/enroll" element={<Enrollment />} />
 
-        
+        <Route path="/enrollment-qr" element={<EnrollmentQR />} />
+
 
         <Route
           path="/enrollment-management"
