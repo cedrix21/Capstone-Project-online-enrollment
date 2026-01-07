@@ -36,7 +36,7 @@ export default function EnrollmentManagement() {
     }
   }, [user, navigate]);
 
-  // Fetch enrollments for admin/registrar
+  // ✅ Fetch enrollments for admin/registrar
   useEffect(() => {
     if (user && (user.role === "admin" || user.role === "registrar")) {
       fetchEnrollments();
@@ -44,6 +44,7 @@ export default function EnrollmentManagement() {
     // eslint-disable-next-line
   }, [user]);
 
+  // Fetch enrollments from API
   const fetchEnrollments = async () => {
     try {
       const res = await axios.get("http://127.0.0.1:8000/api/enrollments", {
@@ -51,22 +52,23 @@ export default function EnrollmentManagement() {
       });
       setEnrollments(res.data);
     } catch (err) {
+      console.error(err);
       setMessage("Failed to load enrollments");
     }
   };
 
+  // Update enrollment status (approve/reject)
   const updateStatus = async (id, status) => {
     try {
       await axios.put(
-        `http://127.0.0.1:8000/api/enrollment/${id}/${status}`,
-        {},
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        `http://127.0.0.1:8000/api/enrollment/${id}/status`,
+        { status }, // send status in body
+        { headers: { Authorization: `Bearer ${token}` } }
       );
-      setMessage(`Enrollment ${status}`);
+      setMessage(`Enrollment ${status} successfully`);
       fetchEnrollments();
     } catch (err) {
+      console.error(err);
       setMessage("Action failed");
     }
   };
@@ -75,6 +77,13 @@ export default function EnrollmentManagement() {
     <div className="enrollment-management">
       <h2>Enrollment Management</h2>
       {message && <p className="message">{message}</p>}
+
+      {/* Buttons to add student / go to enrollment form / QR code */}
+      <div className="admin-actions">
+        <button onClick={() => navigate("/enroll")}>Add Student</button>
+        {/*<button onClick={() => navigate("/enroll")}>Go to Enrollment Form</button>*/}
+        <button onClick={() => navigate("/enrollment-qr")}>Show Enrollment QR</button>
+      </div>
 
       <table>
         <thead>
@@ -90,9 +99,7 @@ export default function EnrollmentManagement() {
         <tbody>
           {enrollments.map((e) => (
             <tr key={e.id}>
-              <td>
-                {e.firstName} {e.lastName}
-              </td>
+              <td>{e.firstName} {e.lastName}</td>
               <td>{e.email}</td>
               <td>{e.gradeLevel}</td>
               <td>
@@ -103,13 +110,13 @@ export default function EnrollmentManagement() {
                   <>
                     <button
                       className="approve"
-                      onClick={() => updateStatus(e.id, "approve")}
+                      onClick={() => updateStatus(e.id, "approved")}
                     >
                       Approve
                     </button>
                     <button
                       className="reject"
-                      onClick={() => updateStatus(e.id, "reject")}
+                      onClick={() => updateStatus(e.id, "rejected")}
                     >
                       Reject
                     </button>

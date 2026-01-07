@@ -9,10 +9,9 @@ export default function Dashboard() {
   const [loadingSummary, setLoadingSummary] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
-
   const token = localStorage.getItem("token");
 
-  // Redirect to login if no token
+  // Fetch logged-in user
   useEffect(() => {
     if (!token) {
       navigate("/login");
@@ -33,7 +32,7 @@ export default function Dashboard() {
 
   const isAdminOrRegistrar = user?.role === "admin" || user?.role === "registrar";
 
-  // Fetch enrollment summary for admin/registrar
+  // Fetch summary for admin/registrar
   useEffect(() => {
     if (isAdminOrRegistrar) {
       fetchSummary();
@@ -45,11 +44,10 @@ export default function Dashboard() {
     setLoadingSummary(true);
     setError("");
     try {
-      const res = await axios.get(
-        "http://127.0.0.1:8000/api/enrollments/summary",
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      // Default to 0 if any field is missing
+      console.log("DEBUG: Sending token to summary endpoint:", token);
+      const res = await axios.get("http://127.0.0.1:8000/api/enrollments/summary", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       setSummary({
         pending: res.data?.pending || 0,
         approved: res.data?.approved || 0,
@@ -57,7 +55,7 @@ export default function Dashboard() {
       });
     } catch (err) {
       console.error("Summary fetch error:", err.response || err);
-      setError("Failed to load summary. Make sure your admin/registrar role is set.");
+      setError("Failed to load summary. Make sure your user role is admin/registrar and API is working.");
     } finally {
       setLoadingSummary(false);
     }
@@ -113,14 +111,11 @@ export default function Dashboard() {
               )}
             </div>
 
-            <button onClick={() => navigate("/enroll")}>Add Student</button>
-            <button
-              className="manage-button"
-              onClick={() => navigate("/enrollment-management")}
-            >
-              Go to Enrollment Management
-            </button>
-            <button onClick={() => navigate("/enrollment-qr")}>Show Enrollment QR</button>
+            <div className="admin-buttons">
+              <button onClick={() => navigate("/enroll")}>Add Student</button>
+              <button onClick={() => navigate("/enrollment-management")}>Manage Enrollments</button>
+              <button onClick={() => navigate("/enrollment-qr")}>Show Enrollment QR</button>
+            </div>
           </>
         )}
 
