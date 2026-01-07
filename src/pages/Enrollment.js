@@ -20,14 +20,10 @@ export default function Enrollment() {
     setMessage("");
 
     try {
-      const token = localStorage.getItem("token");
-      const response = await axios.post(
-        "http://127.0.0.1:8000/api/enroll",
-        formData,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      await axios.post(
+  "http://127.0.0.1:8000/api/enrollment/submit",
+  formData
+);
 
       setMessage("Enrollment successful!");
       setFormData({ firstName: "", lastName: "", email: "", gradeLevel: "" });
@@ -84,9 +80,10 @@ export default function Enrollment() {
               <option value="Grade 3">Grade 3</option>
             </select>
           </div>
-          <button type="submit" className="enroll-button">
-            Enroll
-          </button>
+          <button type="submit" className="enroll-button" disabled={loading}>
+          {loading ? "Submitting..." : "Enroll"}
+        </button>
+
         </form>
       </div>
     </div>

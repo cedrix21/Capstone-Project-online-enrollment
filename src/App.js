@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Enrollment from "./pages/Enrollment";
+import EnrollmentManagement from "./pages/EnrollmentManagement";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
@@ -21,11 +22,15 @@ function App() {
           }
         />
 
+        <Route path="/enroll" element={<Enrollment />} />
+
+        
+
         <Route
-          path="/enroll"
+          path="/enrollment-management"
           element={
             <ProtectedRoute>
-              <Enrollment />
+              <EnrollmentManagement />
             </ProtectedRoute>
           }
         />

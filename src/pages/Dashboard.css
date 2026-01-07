@@ -51,3 +51,45 @@
   background-color: #ffe066;
   color: #000;
 }
+.summary-cards {
+  display: flex;
+  justify-content: space-between;
+  margin: 20px 0;
+  gap: 15px;
+}
+
+.summary-cards .card {
+  flex: 1;
+  padding: 15px;
+  border-radius: 10px;
+  color: white;
+  text-align: center;
+  font-weight: bold;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.card.pending {
+  background-color: #f0ad4e; /* orange */
+}
+
+.card.approved {
+  background-color: #5cb85c; /* green */
+}
+
+.card.rejected {
+  background-color: #d9534f; /* red */
+}
+
+.manage-button {
+  margin-top: 10px;
+  padding: 10px 20px;
+  background-color: #f7e14b;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.manage-button:hover {
+  background-color: #ffe066;
+}
